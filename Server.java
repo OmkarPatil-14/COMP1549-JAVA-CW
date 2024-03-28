@@ -4,7 +4,6 @@ import java.util.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
 // Singleton Pattern
 class ServerSingleton {
     private static ServerSingleton instance;
