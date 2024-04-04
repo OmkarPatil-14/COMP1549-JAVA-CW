@@ -1,0 +1,56 @@
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import java.io.*;
+import java.net.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+
+public class ServerTest {
+    private ByteArrayOutputStream outputStream;
+    private Map<String, ClientHandler> clients;
+    private Server server;
+    private Thread serverThread;
+
+    @Before
+    public void setUp() throws IOException {
+        outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+        clients = new HashMap<>();
+        server = new Server();
+        serverThread = new Thread(server::start);
+        serverThread.start();
+    }
+
+    @Test
+    public void testGetCurrentTimestamp() {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String expectedTimestamp = sdf.format(new Date());
+        String actualTimestamp = Server.getCurrentTimestamp();
+        assertEquals(expectedTimestamp, actualTimestamp);
+    }
+
+    @Test
+    public void testServerIPAndPort() throws IOException {
+        // Get the expected server IP and port
+        String expectedIP = InetAddress.getLocalHost().getHostAddress();
+        int expectedPort = Server.SERVER_PORT;
+
+        // Wait for server to start
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Get the actual server IP and port
+        InetAddress actualIP = Server.serverIP;
+        int actualPort = 7500; // The port used by the server
+
+        // Assert if the expected and actual values match
+        assertEquals(expectedIP, actualIP.getHostAddress());
+        assertEquals(expectedPort, actualPort);
+    }
+}
